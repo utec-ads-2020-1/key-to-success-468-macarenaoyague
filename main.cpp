@@ -11,30 +11,6 @@ int main() {
     return 0;
 }
 
-bool sortFromMax(const pair<char, int> &vec1,
-               const pair<char, int> &vec2)
-{
-    return (vec1.second < vec2.second);
-}
-
-vector <pair<char, int>> lettersOrderedFromMax(string &line){
-    map<char, int> letters;
-    vector <pair<char, int>> orderedLetters;
-    for (auto character: line)
-        letters[character]++;
-    for (auto value: letters)
-        orderedLetters.push_back(value);
-    sort(orderedLetters.begin(), orderedLetters.end(), sortFromMax);
-
-    return orderedLetters;
-}
-
-int searchIndex(vector <pair<char, int>> &valueLetters, char &letter){
-    for (int i = 0; i<valueLetters.size(); i++)
-        if (letter == valueLetters[i].first)
-            return i;
-}
-
 void UVa468(){
     int cases;
     string line;
@@ -43,11 +19,48 @@ void UVa468(){
     {
         getline(cin, line);
         cin>>line;
-        vector <pair<char, int>> codeLetters = lettersOrderedFromMax(line);
+        map<char, int> codeLetters;
+        for (auto character: line)
+            codeLetters[character]++;
         cin>>line;
-        vector <pair<char, int>> valueLetters = lettersOrderedFromMax(line);
+        map<char, int> valueLetters;
+        for (auto character: line)
+            valueLetters[character]++;
+
+        int maxNumber = 0;
+        char maxNameCode, maxNameValue;
+        map<char, char> encoding;
+
+        while (true){
+            maxNumber = 0;
+            for (auto character: codeLetters)
+                if (character.second > maxNumber)
+                {
+                    maxNumber = character.second;
+                    maxNameCode = character.first;
+                }
+            codeLetters[maxNameCode] = 0;
+            if (maxNumber == 0)
+                break;
+            maxNumber = 0;
+            for (auto character: valueLetters)
+                if (character.second > maxNumber)
+                {
+                    maxNumber = character.second;
+                    maxNameValue = character.first;
+                }
+            valueLetters[maxNameValue] = 0;
+            encoding[maxNameCode] = maxNameValue;
+        }
+
         for (int j = 0; j<line.size(); j++)
-            line [j] = codeLetters[searchIndex(valueLetters, line[j])].first;
-        cout<<line<<endl<<endl;
+            for (auto character: encoding)
+                if (line[j] == character.second)
+                {
+                    line [j] = character.first;
+                    break;
+                }
+
+        i < cases - 1 ? cout<<line<<endl<<endl : cout<<line<<endl;
     }
 }
